@@ -64,15 +64,26 @@ class TotalTituladosAPIView(ListAPIView):
         years = graduates_by_institution_types.values_list(
             'year', flat=True).distinct()
 
-        data = {}
+        data = []
 
         for institution_type in institution_types:
-            data[institution_type] = {}
+            values = []
             for year in years:
+                item = {}
                 total = graduates_by_institution_types.get(
                     institution_classification_level_3=institution_type, year=year,
                 ).get('total_titulados')
 
-                data[institution_type][year] = total
+                item['total'] = total
+                item['year'] = year
+
+                values.append(item)
+
+            institution = {
+                'name': institution_type,
+                'values': values,
+            }
+
+            data.append(institution)
 
         return Response(data)
