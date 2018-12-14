@@ -1,0 +1,23 @@
+{
+  "name": "ed_superior_app",
+  "version": "1.0.0",
+  "description": "Crear entorno virtual con python 3.5.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cperezadasme/ed_superior_app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cperezadasme/ed_superior_app/issues"
+  },
+  "homepage": "https://github.com/cperezadasme/ed_superior_app#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  },
+  "devDependencies": {}
+}
