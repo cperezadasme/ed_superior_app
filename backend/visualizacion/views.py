@@ -1,6 +1,6 @@
 # from django.shortcuts import render
 from django.db.models import Sum
-from rest_framework.generics import ListAPIView, GenericAPIView
+from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -24,7 +24,7 @@ class TituladosAPIView(ListAPIView):
 class YearAPIView(APIView):
 
     def get(self, request, format=None):
-        queryset = Matricula.objects.values_list('year', flat=True).distinct()
+        queryset = Matricula.objects.values_list('year', flat=True).distinct().order_by('-year')
         return Response(queryset)
 
 
