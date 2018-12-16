@@ -2,11 +2,18 @@
 from django.db.models import Sum
 from rest_framework.generics import ListAPIView, GenericAPIView
 from rest_framework.views import APIView
+from rest_framework.settings import api_settings
+from rest_framework_csv import renderers as r
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.http import HttpResponse
+import json, csv
 
 from .models import Matricula, Titulados
 from .serializers import MatriculaSerializer, TituladosSerializer
 from . filters import MatriculaFilter, TituladosFilter
+
+
 
 
 class MatriulaAPIView(ListAPIView):
@@ -87,3 +94,88 @@ class TotalTituladosAPIView(ListAPIView):
             data.append(institution)
 
         return Response(data)
+
+
+@api_view(['GET', 'POST', ])
+def get_titulados_region(self):
+
+    region_dict = {}
+    queryset = Titulados.objects.all()
+    for register in queryset:
+        region = getattr(register, 'region')
+        if region in region_dict:
+            region_dict[region] +=1
+        else:
+            region_dict[region] = 0
+
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['Region', 'Titulados', ])
+    for region in region_dict:
+        writer.writerow([region, region_dict[region]])
+    return response
+
+@api_view(['GET', 'POST', ])
+def get_matriculados_region(self):
+    region_dict = {}
+    queryset = Matricula.objects.all()
+    for register in queryset:
+        region = getattr(register, 'region')
+        if region in region_dict:
+            region_dict[region] += 1
+        else:
+            region_dict[region] = 0
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['Region', 'Matrícula', ])
+    for region in region_dict:
+        writer.writerow([region, region_dict[region]])
+    return response
+
+@api_view(['GET', 'POST', ])
+def get_vs_region(self):
+    region_dict_matricula = {}
+    queryset_matricula = Matricula.objects.all()
+    for register in queryset_matricula:
+        region = getattr(register, 'region')
+        if region in region_dict_matricula:
+            region_dict_matricula[region] += 1
+        else:
+            region_dict_matricula[region] = 0
+
+    region_dict_titulados = {}
+    queryset_titulados = Titulados.objects.all()
+    for register in queryset_titulados:
+        region = getattr(register, 'region')
+        if region in region_dict_titulados:
+            region_dict_titulados[region] += 1
+        else:
+            region_dict_titulados[region] = 0
+
+    region_dict_response  = []
+    for region in region_dict_matricula:
+        details = {}
+        details["region"] = region
+        details["matricula"] = region_dict_matricula[region]
+        details["titulados"] = region_dict_titulados[region]
+        region_dict_response.append(details)
+
+    print(region_dict_response)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Region', 'Matrícula', 'Titulados'])
+    for region in region_dict_response:
+        writer.writerow([region["region"], region["matricula"], region["titulados"]])
+
+    return response
+
