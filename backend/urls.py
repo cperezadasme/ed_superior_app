@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url, include
 from django.views.generic import TemplateView
+from backend.visualizacion.views import *
 
 urlpatterns = [
     url(r'admin/', admin.site.urls),
@@ -25,4 +26,22 @@ urlpatterns = [
         TemplateView.as_view(template_name='index.html'),
         name='index',
     ),
+    url(
+        r'barchart_titulados/$',
+        TemplateView.as_view(template_name='barchart_titulados.html'),
+        name='barchart_titulados',
+    ),
+    url(
+        r'barchart_matriculados/$',
+        TemplateView.as_view(template_name='barchart_matriculados.html'),
+        name='barchart_matriculados',
+    ),
+    url(
+        r'barchart_matriculados_titulados/$',
+        TemplateView.as_view(template_name='barchart_matriculados_titulados.html'),
+        name='barchart_matriculados_titulados',
+    ),
+    url(r'titulados_region/', get_titulados_region, name="titulados_region"),
+    url(r'matriculados_region/', get_matriculados_region, name="matriculados_region"),
+    url(r'vs_region/', get_vs_region, name="vs_region")
 ]
