@@ -19,8 +19,8 @@ var render_multiline = function (query_params) {
 	}).done(function(data){
 		var margin_top = 20, margin_right=20, margin_bottom=50, margin_left=70
 
-		var width = 680;
-		var height = 485  - margin_top - margin_bottom;
+		var width = 960;
+		var height = 500 - margin_top - margin_bottom;
 		var margin = 50;
 		var duration = 250;
 
@@ -231,4 +231,4 @@ var render_multiline = function (query_params) {
 	});
 }
 
-render_multiline('');
+render_multiline();

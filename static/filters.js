@@ -3,9 +3,7 @@ function set_data_endpoint(endpoint, form_name){
 		url: endpoint,
 		type: 'GET',
 	}).done(function (data) {
-		console.log('done')
 		for (var row of data) {
-	    	console.log(row);
 	        $(form_name).append(
 	            '<option value="' + row+ '">' + row + '</option>'
 	        );
@@ -57,4 +55,9 @@ var multiline = function () {
 	render_multiline(query_params);
 }
 
+var barchart = function(){
+	render_barchart();
+}
+
 $('#form__btn').on('click', multiline);
+$('#form__btn').on('click', barchart);

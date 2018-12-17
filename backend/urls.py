@@ -43,5 +43,5 @@ urlpatterns = [
     ),
     url(r'titulados_region/', get_titulados_region, name="titulados_region"),
     url(r'matriculados_region/', get_matriculados_region, name="matriculados_region"),
-    url(r'vs_region/', get_vs_region, name="vs_region")
+    url(r'vs_region/', get_vs_region, name="vs_region"),
 ]

@@ -2,18 +2,14 @@
 from django.db.models import Sum
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
-from rest_framework.settings import api_settings
-from rest_framework_csv import renderers as r
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.http import HttpResponse
-import json, csv
+import csv
 
 from .models import Matricula, Titulados
 from .serializers import MatriculaSerializer, TituladosSerializer
 from . filters import MatriculaFilter, TituladosFilter
-
-
 
 
 class MatriulaAPIView(ListAPIView):
@@ -104,10 +100,9 @@ def get_titulados_region(self):
     for register in queryset:
         region = getattr(register, 'region')
         if region in region_dict:
-            region_dict[region] +=1
+            region_dict[region] += 1
         else:
             region_dict[region] = 0
-
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
@@ -118,6 +113,7 @@ def get_titulados_region(self):
     for region in region_dict:
         writer.writerow([region, region_dict[region]])
     return response
+
 
 @api_view(['GET', 'POST', ])
 def get_matriculados_region(self):
@@ -140,32 +136,20 @@ def get_matriculados_region(self):
         writer.writerow([region, region_dict[region]])
     return response
 
+
 @api_view(['GET', 'POST', ])
-def get_vs_region(self):
-    region_dict_matricula = {}
-    queryset_matricula = Matricula.objects.all()
-    for register in queryset_matricula:
-        region = getattr(register, 'region')
-        if region in region_dict_matricula:
-            region_dict_matricula[region] += 1
-        else:
-            region_dict_matricula[region] = 0
+def get_vs_region(self ):
+    region_dict_matricula = Matricula.objects.values('region').annotate(total=Sum('total_students'))
+    region_dict_titulados = Titulados.objects.values('region').annotate(total=Sum('total_graduates'))
 
-    region_dict_titulados = {}
-    queryset_titulados = Titulados.objects.all()
-    for register in queryset_titulados:
-        region = getattr(register, 'region')
-        if region in region_dict_titulados:
-            region_dict_titulados[region] += 1
-        else:
-            region_dict_titulados[region] = 0
-
-    region_dict_response  = []
-    for region in region_dict_matricula:
+    region_dict_response = []
+    for matricula in region_dict_matricula:
         details = {}
-        details["region"] = region
-        details["matricula"] = region_dict_matricula[region]
-        details["titulados"] = region_dict_titulados[region]
+
+        total_titulados = region_dict_titulados.get(region=matricula['region']).get('total')
+        details["region"] = matricula['region']
+        details["matricula"] = matricula.get('total')
+        details["titulados"] = total_titulados
         region_dict_response.append(details)
 
     print(region_dict_response)
@@ -178,4 +162,3 @@ def get_vs_region(self):
         writer.writerow([region["region"], region["matricula"], region["titulados"]])
 
     return response
-
