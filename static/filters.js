@@ -56,8 +56,29 @@ var multiline = function () {
 }
 
 var barchart = function(){
-	render_barchart();
+	query_params = get_filter_data();
+	query = '?'
+
+	console.log(query_params)
+	if (query_params.hasOwnProperty('year')){
+		console.log('year')
+		query += 'year=' + query_params.year;
+	}
+	if (query_params.hasOwnProperty('area_of_knowledge')){
+		console.log('area_of_knowledge')
+		query += 'area_of_knowledge=' + query_params.area_of_knowledge;
+	}
+	if (query_params.hasOwnProperty('institution_classification_level_3')){
+		console.log('institution_classification_level_3')
+		query += 'institution_classification_level_3=' + query_params.institution_classification_level_3;
+	}
+	console.log(query)
+	render_barchart(query);
 }
 
-$('#form__btn').on('click', multiline);
-$('#form__btn').on('click', barchart);
+var render = function () {
+	multiline();
+	barchart();
+}
+
+$('#form__btn').on('click', render);

@@ -138,9 +138,27 @@ def get_matriculados_region(self):
 
 
 @api_view(['GET', 'POST', ])
-def get_vs_region(self ):
-    region_dict_matricula = Matricula.objects.values('region').annotate(total=Sum('total_students'))
-    region_dict_titulados = Titulados.objects.values('region').annotate(total=Sum('total_graduates'))
+def get_vs_region(self):
+    query_params = self.GET
+    query_matricula = Matricula.objects.all()
+    query_titulados = Titulados.objects.all()
+
+    if query_params.get('year'):
+        query_matricula = query_matricula.filter(year=query_params.get('year'))
+        query_titulados = query_titulados.filter(year=query_params.get('year'))
+
+    if query_params.get('area_of_knowledge'):
+        value = query_params.get('area_of_knowledge')
+        query_matricula = query_matricula.filter(area_of_knowledge=value)
+        query_titulados = query_titulados.filter(area_of_knowledge=value)
+
+    if query_params.get('institution_classification_level_3'):
+        value = query_params.get('institution_classification_level_3')
+        query_matricula = query_matricula.filter(institution_classification_level_3=value)
+        query_titulados = query_titulados.filter(institution_classification_level_3=value)
+
+    region_dict_matricula = query_matricula.values('region').annotate(total=Sum('total_students'))
+    region_dict_titulados = query_titulados.values('region').annotate(total=Sum('total_graduates'))
 
     region_dict_response = []
     for matricula in region_dict_matricula:
